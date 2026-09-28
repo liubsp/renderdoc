@@ -626,6 +626,10 @@ RenderDoc::RenderDoc()
   m_TargetControlThreadShutdown = false;
   m_ControlClientThreadShutdown = false;
 
+  // Some applications query driver versions or enumerate GPUs through NVAPI at startup.
+  // Default NVIDIA (0x10DE) passthrough on so these queries can reach the driver.
+  EnableVendorExtensions(VendorExtensions::NvAPI);
+
   ClearTrackedFiles();
 }
 

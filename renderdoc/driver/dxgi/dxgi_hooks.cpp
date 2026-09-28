@@ -256,6 +256,16 @@ public:
     CreateDXGIFactory2.Register("dxgi.dll", "CreateDXGIFactory2", CreateDXGIFactory2_hook);
     GetDebugInterface.Register("dxgi.dll", "DXGIGetDebugInterface", DXGIGetDebugInterface_hook);
     GetDebugInterface1.Register("dxgi.dll", "DXGIGetDebugInterface1", DXGIGetDebugInterface1_hook);
+
+    // Streamline can bypass normal API entry points. Use the native capture wrappers here as well;
+    // this intentionally bypasses Streamline's factory proxies and may affect its graphics features.
+    LibraryHooks::RegisterLibraryHook("sl.interposer.dll", NULL);
+    LibraryHooks::RegisterFunctionHook(
+        "sl.interposer.dll", FunctionHook("CreateDXGIFactory", NULL, &CreateDXGIFactory_hook));
+    LibraryHooks::RegisterFunctionHook(
+        "sl.interposer.dll", FunctionHook("CreateDXGIFactory1", NULL, &CreateDXGIFactory1_hook));
+    LibraryHooks::RegisterFunctionHook(
+        "sl.interposer.dll", FunctionHook("CreateDXGIFactory2", NULL, &CreateDXGIFactory2_hook));
   }
 
 private:

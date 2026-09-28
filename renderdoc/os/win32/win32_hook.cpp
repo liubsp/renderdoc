@@ -289,6 +289,12 @@ struct CachedHookData
     if(modpath[0] == 0)
       return;
 
+    // Some applications fail at startup when loader hooks modify system-library imports.
+    // Leave these imports untouched; callers can still hook the libraries' graphics exports.
+    rdcwstr systemPath = StringFormat::UTF82Wide(Process::GetEnvVariable("SystemRoot") + "\\");
+    if(_wcsnicmp(modpath, systemPath.c_str(), wcslen(systemPath.c_str())) == 0)
+      return;
+
     // windows 11 and newer versions have weird hotpatch DLLs that don't act like real DLLs. The
     // LoadLibraryW below will fail for these DLLs even when using the module path provided.
     // Only check the path for DLLs that might be a windows-hotpatch but if it matches we'll skip

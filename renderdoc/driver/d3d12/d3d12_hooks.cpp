@@ -573,6 +573,16 @@ public:
     GetD3D11On12On7.Register("d3d11on12.dll", "GetD3D11On12On7Interface",
                              GetD3D11On12On7Interface_hook);
 
+    // Some applications obtain graphics entry points from Streamline, which bypasses GetProcAddress
+    // when resolving the native API. Route these entry points through the capture wrappers instead.
+    LibraryHooks::RegisterLibraryHook("sl.interposer.dll", NULL);
+    LibraryHooks::RegisterFunctionHook(
+        "sl.interposer.dll", FunctionHook("D3D12CreateDevice", NULL, &D3D12CreateDevice_hook));
+    LibraryHooks::RegisterFunctionHook(
+        "sl.interposer.dll", FunctionHook("D3D12GetInterface", NULL, &D3D12GetInterface_hook));
+    LibraryHooks::RegisterFunctionHook(
+        "sl.interposer.dll", FunctionHook("D3D12GetDebugInterface", NULL, &D3D12GetDebugInterface_hook));
+
     m_RecurseSlot = Threading::AllocateTLSSlot();
     Threading::SetTLSValue(m_RecurseSlot, NULL);
   }
