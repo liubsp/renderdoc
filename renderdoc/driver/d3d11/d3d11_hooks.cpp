@@ -120,6 +120,10 @@ private:
     else
       Flags &= ~D3D11_CREATE_DEVICE_DEBUG;
 
+    // Some applications use this flag to suppress registry-controlled debug layers.
+    // Clear it here to keep capture wrapping enabled and return the requested immediate context.
+    Flags &= ~D3D11_CREATE_DEVICE_PREVENT_ALTERING_LAYER_SETTINGS_FROM_REGISTRY;
+
     DXGI_SWAP_CHAIN_DESC swapDesc;
     DXGI_SWAP_CHAIN_DESC *pUsedSwapDesc = NULL;
 
